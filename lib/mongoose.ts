@@ -6,25 +6,39 @@ if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable");
 }
 
-let cached = global.mongoose;
+// Define a type for the global cache object
+type MongooseCache = {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+};
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+// Extend the Node.js global type
+const globalForMongoose = globalThis as typeof globalThis & {
+  mongoose?: MongooseCache;
+};
+
+// Initialize the global cache if it doesn't exist
+if (!globalForMongoose.mongoose) {
+  globalForMongoose.mongoose = {
+    conn: null,
+    promise: null,
+  };
 }
 
-async function dbConnect() {
-  if (cached.conn) return cached.conn;
+const mongooseCache = globalForMongoose.mongoose;
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
+async function dbConnect(): Promise<typeof mongoose> {
+  if (mongooseCache.conn) return mongooseCache.conn;
+
+  if (!mongooseCache.promise) {
+    mongooseCache.promise = mongoose.connect(MONGODB_URI, {
       dbName: "musicplayer",
       bufferCommands: false,
-    }).then((mongoose) => {
-      return mongoose;
     });
   }
-  cached.conn = await cached.promise;
-  return cached.conn;
+
+  mongooseCache.conn = await mongooseCache.promise;
+  return mongooseCache.conn;
 }
 
 export default dbConnect;
