@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const db = client.db();
 
     await db.collection("songs").insertOne(song);
-
+    console.log("Song is added successfully.....")
     return NextResponse.json({ message: "Song added", song });
   } catch (error) {
     console.error("Error adding song:", error);

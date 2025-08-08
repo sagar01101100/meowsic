@@ -289,7 +289,9 @@ export default function MusicPlayer({ songs: initialSongs }: { songs: Song[] }) 
         url,
         addedBy: username,
       });
+      console.log("Song is added successfully.....")
        await fetchSongs();
+       console.log("Playlist refreshed....")
       setShowAddForm(false);
     } catch (error) {
       console.error("Failed to add song:", error);
