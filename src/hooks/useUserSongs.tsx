@@ -11,7 +11,7 @@ export default function useUserSongs(username: string | string[] | undefined) {
 
     const fetchSongs = async () => {
       try {
-        const res = await axios.get(`/api/users/${username}/songs`);
+        const res = await axios.get(`/api/songs/${username}`);
         setSongs(res.data); // Make sure API returns correct `Song[]` shape
       } catch (error) {
         console.error("Failed to fetch songs", error);

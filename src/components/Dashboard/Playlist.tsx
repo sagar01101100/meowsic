@@ -60,43 +60,36 @@
 
 
 
-
-
 "use client";
 
-import { useEffect, useState } from "react";
 import { Song } from "@/types/song";
-import usePlayerStore from "@/zustand/PlayStore";
 
 interface PlaylistProps {
-  songs: Song[];
+  songs?: Song[] | null;          // songs array, optional
+  currentSongId?: string | null;  // current playing song id to highlight
+  onSelectSong: (song: Song) => void; // callback to select a song
 }
 
-export default function Playlist({ songs }: PlaylistProps) {
-  const { currentSong, setCurrentSong } = usePlayerStore();
-  const [currentId, setCurrentId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setCurrentId(currentSong?._id || null);
-  }, [currentSong]);
+export default function Playlist({ songs, currentSongId, onSelectSong }: PlaylistProps) {
+  const safeSongs = Array.isArray(songs) ? songs : [];
 
   return (
     <div className="space-y-2 p-4 bg-gray-800 rounded-lg shadow-md text-white w-64">
       <h2 className="text-2xl font-semibold mb-4">🎶 Playlist</h2>
-      {songs.length === 0 ? (
+      {safeSongs.length === 0 ? (
         <div className="text-gray-400">No songs added yet.</div>
       ) : (
-        songs.map((song) => (
+        safeSongs.map((song) => (
           <div
             key={song._id}
-            onClick={() => setCurrentSong(song)}
+            onClick={() => onSelectSong(song)}
             className={`cursor-pointer p-3 rounded transition duration-200 ${
-              song._id === currentId
+              song._id === currentSongId
                 ? "bg-pink-600 text-white font-bold"
                 : "bg-white/10 hover:bg-white/20 text-white"
             }`}
           >
-            {song._id === currentId ? "▶️" : "🎵"} {song.title}
+            {song._id === currentSongId ? "▶️" : "🎵"} {song.title}
           </div>
         ))
       )}

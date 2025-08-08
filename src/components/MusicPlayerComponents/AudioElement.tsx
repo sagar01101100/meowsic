@@ -2,7 +2,7 @@
 import React from "react";
 
 interface AudioElementProps {
-  audioRef: React.RefObject<HTMLAudioElement>;
+  audioRef: React.RefObject<HTMLAudioElement | null>; // allow null for unmounted ref
   src: string;
 }
 
